@@ -1,0 +1,4 @@
+Agregar
+
+-Cuando es fiado, no entra en caja hasta que se pague, solo se descuenta stock
+-Apartado donde se ve, cuanto debe el cliente y que cuando lo pague, ahi si marcarlo como pagado y que tire las opciones del metodo de pago y ahi si recien entra a caja
