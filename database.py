@@ -68,6 +68,7 @@ def crear_tablas():
         pagado INTEGER DEFAULT 0
     )
     """)
+    
 
     conn.commit()
     conn.close()
@@ -441,3 +442,60 @@ def obtener_ganancia_por_mes(mes):
 
     conn.close()
     return total, cantidad, ganancia
+
+def obtener_detalle_venta(venta_id):
+    conn = sqlite3.connect(DB_NAME)
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        SELECT p.nombre, d.cantidad, d.subtotal
+        FROM detalle_venta d
+        JOIN productos p ON d.producto_id = p.id
+        WHERE d.venta_id = ?
+    """, (venta_id,))
+
+    items = cursor.fetchall()
+    conn.close()
+    return items
+
+
+def obtener_estado_fiado(venta_id):
+    conn = sqlite3.connect(DB_NAME)
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        SELECT fiado, pagado, cliente_id
+        FROM ventas
+        WHERE id = ?
+    """, (venta_id,))
+
+    data = cursor.fetchone()
+    conn.close()
+    return data
+
+def obtener_estado_fiado(venta_id):
+    """
+    Devuelve:
+    None -> si la venta NO es fiada
+    (1, pagado, nombre_cliente) -> si es fiada
+    """
+
+    conn = conectar()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        SELECT
+            1 AS es_fiado,
+            f.pagado,
+            c.nombre
+        FROM fiados f
+        JOIN clientes c ON f.cliente_id = c.id
+        JOIN ventas v ON v.fecha = f.fecha
+        WHERE v.id = ?
+        LIMIT 1
+    """, (venta_id,))
+
+    resultado = cursor.fetchone()
+    conn.close()
+
+    return resultado
